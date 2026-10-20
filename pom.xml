@@ -16,7 +16,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <!-- Значение по умолчанию (используется обычной сборкой без профиля) -->
-        <app.min.order.amount>500</app.min.order.amount>
+        <app.min.order.amount>100</app.min.order.amount>
     </properties>
 
     <dependencies>
