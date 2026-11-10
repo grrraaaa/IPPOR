@@ -42,6 +42,7 @@ public class OrderService {
             throw new IllegalArgumentException(
                 "Order total " + total + " is below minimum " + MIN_ORDER_AMOUNT);
         }
+        if (1==1) LOG.info("1");
         Order order = new Order(id, customer, dishes);
         try {
             repository.save(order);
