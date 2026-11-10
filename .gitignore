@@ -12,3 +12,4 @@ target/
 # OS / logs
 *.log
 Thumbs.db
+logs/

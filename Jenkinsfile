@@ -17,6 +17,11 @@ pipeline {
                 bat 'mvn -B compile'
             }
         }
+        stage('Static Analysis') {
+            steps {
+                bat 'mvn -B checkstyle:check'
+            }
+        }
         stage('Test') {
             steps {
                 bat 'mvn -B test'
@@ -31,7 +36,7 @@ pipeline {
     }
 
     post {
-        success { echo 'BUILD SUCCESS: Build -> Test -> Package passed' }
-        failure { echo 'BUILD FAILURE: check Console Output (tests or compilation)' }
+        success { echo 'BUILD SUCCESS: Build -> Static Analysis -> Test -> Package passed' }
+        failure { echo 'BUILD FAILURE: check Console Output (compilation, Checkstyle or tests)' }
     }
 }

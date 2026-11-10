@@ -52,4 +52,14 @@ class OrderServiceTest {
         assertTrue(ex.getMessage().toLowerCase().contains("minimum"),
             "message should mention minimum, got: " + ex.getMessage());
     }
+
+    /** ERROR-сценарий: хранилище недоступно - сервис логирует ERROR и пробрасывает исключение. */
+    @Test
+    void placeOrder_repositoryFailure_rethrows() {
+        OrderService broken = new OrderService(order -> {
+            throw new IllegalStateException("Order storage is unavailable");
+        });
+        assertThrows(IllegalStateException.class,
+            () -> broken.placeOrder(2, bob, Arrays.asList(pizza, cola, salad)));
+    }
 }

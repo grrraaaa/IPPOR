@@ -4,6 +4,8 @@ import food.delivery.model.Customer;
 import food.delivery.model.Dish;
 import food.delivery.model.Order;
 import food.delivery.repository.OrderRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,6 +22,8 @@ import java.util.Properties;
  */
 public class OrderService {
 
+    private static final Logger LOG = LoggerFactory.getLogger(OrderService.class);
+
     /** Минимальная сумма заказа; значение берётся из application.properties. */
     public static final double MIN_ORDER_AMOUNT = loadMinOrderAmount();
 
@@ -30,13 +34,23 @@ public class OrderService {
     }
 
     public Order placeOrder(int id, Customer customer, List<Dish> dishes) {
+        LOG.info("Delivery order #{} received: {} dish(es)", id, dishes.size());
         double total = dishes.stream().mapToDouble(Dish::getPrice).sum();
         if (total < MIN_ORDER_AMOUNT) {
+            // некорректная операция клиента, не сбой системы -> WARN
+            LOG.warn("Delivery order #{} rejected: total {} is below minimum {}", id, total, MIN_ORDER_AMOUNT);
             throw new IllegalArgumentException(
                 "Order total " + total + " is below minimum " + MIN_ORDER_AMOUNT);
         }
         Order order = new Order(id, customer, dishes);
-        repository.save(order);
+        try {
+            repository.save(order);
+        } catch (RuntimeException e) {
+            // заказ клиента корректен, но система не смогла его сохранить -> ERROR
+            LOG.error("Delivery order #{} failed: could not save order", id, e);
+            throw e;
+        }
+        LOG.info("Delivery order #{} placed for '{}', total={}", id, customer.getName(), total);
         return order;
     }
 

@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<!DOCTYPE module PUBLIC
+        "-//Checkstyle//DTD Checkstyle Configuration 1.3//EN"
+        "https://checkstyle.org/dtds/configuration_1_3.dtd">
+
+<!-- Правила статического анализа для ЛР5. Любое нарушение = error => mvn checkstyle:check падает. -->
+<module name="Checker">
+    <property name="charset" value="UTF-8"/>
+    <property name="severity" value="error"/>
+
+    <!-- Табы запрещены: отступы только пробелами -->
+    <module name="FileTabCharacter"/>
+
+    <!-- Пробелы в конце строки -->
+    <module name="RegexpSingleline">
+        <property name="format" value="\s+$"/>
+        <property name="message" value="Line has trailing spaces."/>
+    </module>
+
+    <!-- Строка не длиннее 120 символов -->
+    <module name="LineLength">
+        <property name="max" value="120"/>
+    </module>
+
+    <module name="TreeWalker">
+        <!-- Именование: классы UpperCamelCase, методы/переменные lowerCamelCase, константы UPPER_CASE -->
+        <module name="TypeName"/>
+        <module name="MethodName"/>
+        <module name="LocalVariableName"/>
+        <module name="MemberName"/>
+        <module name="ParameterName"/>
+        <module name="ConstantName"/>
+
+        <!-- Импорты: без *, без неиспользуемых и повторных -->
+        <module name="AvoidStarImport"/>
+        <module name="UnusedImports"/>
+        <module name="RedundantImport"/>
+
+        <!-- if/for/while всегда с фигурными скобками -->
+        <module name="NeedBraces"/>
+        <!-- Пустые блоки catch/if запрещены -->
+        <module name="EmptyBlock"/>
+        <!-- Одна инструкция на строку -->
+        <module name="OneStatementPerLine"/>
+        <!-- equals() без hashCode() -->
+        <module name="EqualsHashCode"/>
+
+        <!-- Вместо System.out/err используем Logger (SLF4J) -->
+        <module name="RegexpSinglelineJava">
+            <property name="format" value="System\.(out|err)\.print"/>
+            <property name="message" value="Use SLF4J Logger instead of System.out/System.err."/>
+            <property name="ignoreComments" value="true"/>
+        </module>
+    </module>
+</module>
