@@ -25,7 +25,7 @@ public class OrderService {
     private static final Logger LOG = LoggerFactory.getLogger(OrderService.class);
 
     /** Минимальная сумма заказа; значение берётся из application.properties. */
-    public static final double MIN_ORDER_AMOUNT = loadMinOrderAmount();{
+    public static final double MIN_ORDER_AMOUNT = loadMinOrderAmount();
 
     private final OrderRepository repository;
 
