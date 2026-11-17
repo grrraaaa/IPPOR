@@ -1,0 +1,38 @@
+services:
+  delivery:
+    image: eclipse-temurin:17-jre
+    working_dir: /app
+    command: ["java", "-Ddelivery.host=0.0.0.0", "-jar", "delivery.jar"]
+    ports:
+      - "127.0.0.1:8081:8081"
+    volumes:
+      - type: bind
+        source: ./target/delivery-1.0-SNAPSHOT.jar
+        target: /app/delivery.jar
+        read_only: true
+        bind:
+          create_host_path: false
+
+  prometheus:
+    image: prom/prometheus:v3.5.0
+    ports:
+      - "127.0.0.1:9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+
+  grafana:
+    image: grafana/grafana:12.3.0
+    environment:
+      GF_AUTH_ANONYMOUS_ENABLED: "true"
+      GF_AUTH_ANONYMOUS_ORG_ROLE: Viewer
+    ports:
+      - "127.0.0.1:3001:3000"
+    volumes:
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
+      - grafana-data:/var/lib/grafana
+
+volumes:
+  prometheus-data:
+  grafana-data:

@@ -4,6 +4,8 @@ import food.delivery.model.Customer;
 import food.delivery.model.Dish;
 import food.delivery.model.Order;
 import food.delivery.repository.OrderRepository;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,12 +30,31 @@ public class OrderService {
     public static final double MIN_ORDER_AMOUNT = loadMinOrderAmount();
 
     private final OrderRepository repository;
+    private final Counter operations;
+    private final Counter successes;
+    private final Counter errors;
 
-    public OrderService(OrderRepository repository) {
+    public OrderService(OrderRepository repository, MeterRegistry registry) {
         this.repository = repository;
+        operations = registry.counter("application.operations");
+        successes = registry.counter("application.operations.success");
+        errors = registry.counter("application.operations.error");
     }
 
     public Order placeOrder(int id, Customer customer, List<Dish> dishes) {
+        try {
+            Order order = saveOrder(id, customer, dishes);
+            successes.increment();
+            return order;
+        } catch (RuntimeException e) {
+            errors.increment();
+            throw e;
+        } finally {
+            operations.increment();
+        }
+    }
+
+    private Order saveOrder(int id, Customer customer, List<Dish> dishes) {
         LOG.info("Delivery order #{} received: {} dish(es)", id, dishes.size());
         double total = dishes.stream().mapToDouble(Dish::getPrice).sum();
         if (total < MIN_ORDER_AMOUNT) {

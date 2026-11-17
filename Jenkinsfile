@@ -1,14 +1,18 @@
 pipeline {
-    // Код приходит из Git автоматически (checkout scm) — customWorkspace из ЛР3 больше не нужен.
     agent any
+
+    options {
+        skipDefaultCheckout()
+    }
 
     environment {
         JAVA_HOME = 'C:/jdk17'
     }
 
     stages {
-        stage('Checkout info') {
+        stage('Checkout') {
             steps {
+                checkout scm
                 bat 'git log -1 --pretty=format:"commit %%h | %%an | %%s"'
             }
         }
@@ -30,7 +34,7 @@ pipeline {
         stage('Package') {
             steps {
                 bat 'mvn -B package -DskipTests'
-                archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
+                archiveArtifacts artifacts: 'target/delivery-*.jar', fingerprint: true
             }
         }
     }
