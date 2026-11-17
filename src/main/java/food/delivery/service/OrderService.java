@@ -33,12 +33,14 @@ public class OrderService {
     private final Counter operations;
     private final Counter successes;
     private final Counter errors;
+    private final Counter belowMinimum;
 
     public OrderService(OrderRepository repository, MeterRegistry registry) {
         this.repository = repository;
         operations = registry.counter("application.operations");
         successes = registry.counter("application.operations.success");
         errors = registry.counter("application.operations.error");
+        belowMinimum = registry.counter("food.delivery.orders.below.minimum");
     }
 
     public Order placeOrder(int id, Customer customer, List<Dish> dishes) {
@@ -58,6 +60,7 @@ public class OrderService {
         LOG.info("Delivery order #{} received: {} dish(es)", id, dishes.size());
         double total = dishes.stream().mapToDouble(Dish::getPrice).sum();
         if (total < MIN_ORDER_AMOUNT) {
+            belowMinimum.increment();
             // некорректная операция клиента, не сбой системы -> WARN
             LOG.warn("Delivery order #{} rejected: total {} is below minimum {}", id, total, MIN_ORDER_AMOUNT);
             throw new IllegalArgumentException(

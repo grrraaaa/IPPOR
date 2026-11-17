@@ -14,7 +14,7 @@
       "title": "Total Operations",
       "gridPos": {
         "h": 5,
-        "w": 8,
+        "w": 6,
         "x": 0,
         "y": 0
       },
@@ -57,8 +57,8 @@
       "title": "Successful Operations",
       "gridPos": {
         "h": 5,
-        "w": 8,
-        "x": 8,
+        "w": 6,
+        "x": 6,
         "y": 0
       },
       "datasource": {
@@ -100,8 +100,8 @@
       "title": "Errors",
       "gridPos": {
         "h": 5,
-        "w": 8,
-        "x": 16,
+        "w": 6,
+        "x": 12,
         "y": 0
       },
       "datasource": {
@@ -123,6 +123,49 @@
           "color": {
             "mode": "fixed",
             "fixedColor": "red"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        }
+      }
+    },
+    {
+      "id": 5,
+      "type": "stat",
+      "title": "Orders Below Minimum",
+      "gridPos": {
+        "h": 5,
+        "w": 6,
+        "x": 18,
+        "y": 0
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "delivery-prometheus"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "food_delivery_orders_below_minimum_total{job=\"food-delivery\"}",
+          "instant": true,
+          "range": false
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 0,
+          "min": 0,
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "orange"
           }
         },
         "overrides": []

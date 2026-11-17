@@ -44,6 +44,7 @@ class OrderServiceTest {
         assertTrue(registry.scrape().contains("application_operations_total 1.0\n"));
         assertTrue(registry.scrape().contains("application_operations_success_total 1.0\n"));
         assertTrue(registry.scrape().contains("application_operations_error_total 0.0\n"));
+        assertTrue(registry.scrape().contains("food_delivery_orders_below_minimum_total 0.0\n"));
     }
 
     @Test
@@ -63,6 +64,8 @@ class OrderServiceTest {
             () -> service.placeOrder(1, bob, Arrays.asList(cola)));
         assertTrue(ex.getMessage().toLowerCase().contains("minimum"),
             "message should mention minimum, got: " + ex.getMessage());
+        assertTrue(registry.scrape().contains("application_operations_error_total 1.0\n"));
+        assertTrue(registry.scrape().contains("food_delivery_orders_below_minimum_total 1.0\n"));
     }
 
     /** ERROR-сценарий: хранилище недоступно - сервис логирует ERROR и пробрасывает исключение. */
@@ -76,5 +79,6 @@ class OrderServiceTest {
         assertTrue(registry.scrape().contains("application_operations_total 1.0\n"));
         assertTrue(registry.scrape().contains("application_operations_success_total 0.0\n"));
         assertTrue(registry.scrape().contains("application_operations_error_total 1.0\n"));
+        assertTrue(registry.scrape().contains("food_delivery_orders_below_minimum_total 0.0\n"));
     }
 }
